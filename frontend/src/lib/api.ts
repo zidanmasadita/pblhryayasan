@@ -182,16 +182,175 @@ export const apiClient = {
 
   /**
    * ===============================
-   * USERS (CONTOH)
+   * USERS
    * ===============================
    */
   users: {
     getAll: async (): Promise<ApiResponse> => {
-      const response = await api.get(
-        "/users",
-        { withCredentials: true }
-      );
+      const response = await api.get("/users", { withCredentials: true });
+      return response.data;
+    },
+  },
 
+  /**
+   * ===============================
+   * ATTENDANCE
+   * ===============================
+   */
+  attendance: {
+    getToday: async (): Promise<ApiResponse> => {
+      const response = await api.get("/attendance/today", { withCredentials: true });
+      return response.data;
+    },
+
+    getHistory: async (params?: Record<string, unknown>): Promise<ApiResponse> => {
+      const response = await api.get("/attendance/history", { params, withCredentials: true });
+      return response.data;
+    },
+
+    checkIn: async (data?: {
+      latitude_in?: number;
+      longitude_in?: number;
+      keterangan?: string;
+      file_pendukung?: File;
+    }): Promise<ApiResponse> => {
+      if (!data?.file_pendukung) {
+        const response = await api.post("/attendance/checkin", {
+          latitude_in: data?.latitude_in,
+          longitude_in: data?.longitude_in,
+          keterangan: data?.keterangan,
+        }, { withCredentials: true });
+        return response.data;
+      }
+
+      const formData = new FormData();
+      if (data?.latitude_in !== undefined) formData.append("latitude_in", data.latitude_in.toString());
+      if (data?.longitude_in !== undefined) formData.append("longitude_in", data.longitude_in.toString());
+      if (data?.keterangan) formData.append("keterangan", data.keterangan);
+      if (data?.file_pendukung) formData.append("file_pendukung", data.file_pendukung);
+
+      const response = await api.post("/attendance/checkin", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+      return response.data;
+    },
+
+    checkOut: async (data?: {
+      latitude_out?: number;
+      longitude_out?: number;
+      keterangan?: string;
+    }): Promise<ApiResponse> => {
+      const response = await api.post("/attendance/checkout", data, { withCredentials: true });
+      return response.data;
+    },
+  },
+
+  /**
+   * ===============================
+   * DASHBOARD  
+   * ===============================
+   */
+  dashboard: {
+    getPersonal: async (): Promise<ApiResponse> => {
+      const response = await api.get("/dashboard/personal", { withCredentials: true });
+      return response.data;
+    },
+
+    getStats: async (): Promise<ApiResponse> => {
+      const response = await api.get("/dashboard/stats", { withCredentials: true });
+      return response.data;
+    },
+  },
+
+  /**
+   * ===============================
+   * LEAVE (CUTI)
+   * ===============================
+   */
+  leave: {
+    getAll: async (): Promise<ApiResponse> => {
+      const response = await api.get("/leave", { withCredentials: true });
+      return response.data;
+    },
+
+    create: async (data: unknown): Promise<ApiResponse> => {
+      const isFormData = typeof FormData !== "undefined" && data instanceof FormData;
+      const response = await api.post("/leave", data, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : undefined,
+        withCredentials: true,
+      });
+      return response.data;
+    },
+
+    approve: async (id: number, komentar?: string): Promise<ApiResponse> => {
+      const response = await api.post(`/leave/${id}/approve`, komentar ? { komentar } : {}, { withCredentials: true });
+      return response.data;
+    },
+
+    reject: async (id: number, reason?: string): Promise<ApiResponse> => {
+      const response = await api.post(`/leave/${id}/reject`, { reason }, { withCredentials: true });
+      return response.data;
+    },
+  },
+
+  /**
+   * ===============================
+   * EVALUATION
+   * ===============================
+   */
+  evaluation: {
+    getAll: async (): Promise<ApiResponse> => {
+      const response = await api.get("/evaluation", { withCredentials: true });
+      return response.data;
+    },
+
+    getPersonal: async (): Promise<ApiResponse> => {
+      const response = await api.get("/evaluation/personal", { withCredentials: true });
+      return response.data;
+    },
+  },
+
+  /**
+   * ===============================
+   * KATEGORI EVALUASI
+   * ===============================
+   */
+  kategoriEvaluasi: {
+    getAll: async (): Promise<ApiResponse> => {
+      const response = await api.get("/kategori-evaluasi", { withCredentials: true });
+      return response.data;
+    },
+
+    create: async (data: { nama: string }): Promise<ApiResponse> => {
+      const response = await api.post("/kategori-evaluasi", data, { withCredentials: true });
+      return response.data;
+    },
+
+    update: async (id: number, data: { nama: string }): Promise<ApiResponse> => {
+      const response = await api.put(`/kategori-evaluasi/${id}`, data, { withCredentials: true });
+      return response.data;
+    },
+
+    delete: async (id: number): Promise<ApiResponse> => {
+      const response = await api.delete(`/kategori-evaluasi/${id}`, { withCredentials: true });
+      return response.data;
+    },
+  },
+
+  /**
+   * ===============================
+   * NOTIFICATIONS
+   * ===============================
+   */
+  notifications: {
+    getAll: async (): Promise<ApiResponse> => {
+      const response = await api.get("/notifications", { withCredentials: true });
+      return response.data;
+    },
+
+    getVerifierNotifications: async (): Promise<ApiResponse> => {
+      const response = await api.get("/verifier-notifications", { withCredentials: true });
       return response.data;
     },
   },
