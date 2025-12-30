@@ -116,7 +116,7 @@ export default function NotifikasiPage() {
       if (notification.type === "leave_verification_needed") {
         router.push("/kepala-sekolah/verifikasi-cuti");
       } else {
-        router.push("/kepala-sekolah/pengajuan-cuti");
+        router.push("/kepala-sekolah/verifikasi-cuti");
       }
     } else if (notification.category === "slip_gaji") {
       router.push("/kepala-sekolah/slip-gaji");
