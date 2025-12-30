@@ -110,9 +110,14 @@ export default function NotifikasiPage() {
     // Mark as read
     markAsRead(notification.id);
 
-    // Navigate based on category
+    // Navigate based on category and type
     if (notification.category === "leave") {
-      router.push("/kepala-sekolah/pengajuan-cuti");
+      // Check if this is a verification notification
+      if (notification.type === "leave_verification_needed") {
+        router.push("/kepala-sekolah/verifikasi-cuti");
+      } else {
+        router.push("/kepala-sekolah/pengajuan-cuti");
+      }
     } else if (notification.category === "slip_gaji") {
       router.push("/kepala-sekolah/slip-gaji");
     }

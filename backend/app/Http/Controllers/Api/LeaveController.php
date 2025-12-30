@@ -31,7 +31,7 @@ class LeaveController extends Controller
                 $leaves = PengajuanCuti::whereHas('user.profilePekerjaan', function ($query) use ($departemenId) {
                     $query->where('id_tempat_kerja', $departemenId);
                 })
-                    ->with(['user.profilePribadi'])
+                    ->with(['user.profilePribadi', 'user.profilePekerjaan'])
                     ->orderBy('created_at', 'desc')
                     ->get();
             } else {

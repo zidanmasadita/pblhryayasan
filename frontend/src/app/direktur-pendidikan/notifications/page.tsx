@@ -110,7 +110,7 @@ export default function NotifikasiPage() {
     // Mark as read
     markAsRead(notification.id);
 
-    // Navigate based on category
+    // Navigate based on category and type
     if (notification.category === "leave") {
       // Get user role to determine correct path
       const userRoles = user?.roles || [];
@@ -130,7 +130,14 @@ export default function NotifikasiPage() {
         basePath = "/kepala-yayasan";
       }
       
-      router.push(`${basePath}/pengajuan-cuti`);
+      // Check if this is a verification notification
+      if (notification.type === "leave_verification_needed") {
+        // Route to verifikasi-cuti for verifiers
+        router.push(`${basePath}/verifikasi-cuti`);
+      } else {
+        // Route to pengajuan-cuti for status updates (approved/rejected)
+        router.push(`${basePath}/pengajuan-cuti`);
+      }
     } else if (notification.category === "slip_gaji") {
       // Navigate to slip gaji riwayat
       const userRoles = user?.roles || [];
