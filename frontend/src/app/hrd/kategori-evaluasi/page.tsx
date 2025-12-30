@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import AccessControl from "@/components/AccessControl";
 import { apiClient } from "@/lib/api";
 
-/* ===================== */
-/* Types */
-/* ===================== */
 interface KategoriEvaluasi {
   id: number;
   nama: string;
@@ -19,9 +16,6 @@ type AlertState =
   | { type: "success" | "error"; message: string }
   | null;
 
-/* ===================== */
-/* Modal Component */
-/* ===================== */
 function Modal({
   title,
   open,
@@ -47,9 +41,6 @@ function Modal({
   );
 }
 
-/* ===================== */
-/* Page */
-/* ===================== */
 export default function HRDKategoriEvaluasiPage() {
   const router = useRouter();
 
@@ -66,9 +57,6 @@ export default function HRDKategoriEvaluasiPage() {
   const [formNama, setFormNama] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<KategoriEvaluasi | null>(null);
 
-  /* ===================== */
-  /* Fetch Data */
-  /* ===================== */
   const loadCategories = useCallback(async () => {
     setIsLoading(true);
     setAlert(null);
@@ -90,9 +78,6 @@ export default function HRDKategoriEvaluasiPage() {
     loadCategories();
   }, [loadCategories]);
 
-  /* ===================== */
-  /* Derived Data */
-  /* ===================== */
   const filtered = categories.filter((c) =>
     c.nama.toLowerCase().includes(query.toLowerCase())
   );
@@ -103,9 +88,6 @@ export default function HRDKategoriEvaluasiPage() {
     page * pageSize
   );
 
-  /* ===================== */
-  /* Actions */
-  /* ===================== */
   const openAdd = () => {
     setEditing(null);
     setFormNama("");

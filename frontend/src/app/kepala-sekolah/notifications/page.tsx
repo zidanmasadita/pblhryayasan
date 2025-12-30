@@ -49,39 +49,32 @@ export default function NotifikasiPage() {
     if (filter === "all") {
       setFilteredNotifications(notifications);
     } else {
-      setFilteredNotifications(
-        notifications.filter((n) => n.category === filter)
-      );
+      setFilteredNotifications(notifications.filter((n) => n.category === filter));
     }
   }, [filter, notifications]);
 
   const loadNotifications = async () => {
     try {
       setIsLoading(true);
-      
+
       // Fetch both notification types concurrently
-      const [userNotifs, verifierNotifs] = await Promise.all([
-        apiClient.notifications.getAll(),
-        apiClient.notifications.getVerifierNotifications()
-      ]);
-      
+      const [userNotifs, verifierNotifs] = await Promise.all([apiClient.notifications.getAll(), apiClient.notifications.getVerifierNotifications()]);
+
       const allNotifications: Notification[] = [];
-      
+
       // Add user notifications (approval/rejection of their own leaves)
       if (userNotifs.success && userNotifs.data && Array.isArray(userNotifs.data)) {
         allNotifications.push(...userNotifs.data);
       }
-      
+
       // Add verifier notifications (leaves that need verification)
       if (verifierNotifs.success && verifierNotifs.data && Array.isArray(verifierNotifs.data)) {
         allNotifications.push(...verifierNotifs.data);
       }
-      
+
       // Sort by timestamp (most recent first)
-      allNotifications.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      );
-      
+      allNotifications.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
       setNotifications(allNotifications);
     } catch (error: any) {
       console.error("Error loading notifications:", error);
@@ -116,7 +109,7 @@ export default function NotifikasiPage() {
       if (notification.type === "leave_verification_needed") {
         router.push("/kepala-sekolah/verifikasi-cuti");
       } else {
-        router.push("/kepala-sekolah/verifikasi-cuti");
+        router.push("/kepala-sekolah/pengajuan-cuti");
       }
     } else if (notification.category === "slip_gaji") {
       router.push("/kepala-sekolah/slip-gaji");
@@ -169,9 +162,7 @@ export default function NotifikasiPage() {
     }
   };
 
-  const unreadCount = notifications.filter(
-    (n) => !readNotifications.includes(n.id)
-  ).length;
+  const unreadCount = notifications.filter((n) => !readNotifications.includes(n.id)).length;
 
   return (
     <AccessControl allowedRoles={["kepala sekolah"]}>
@@ -181,30 +172,17 @@ export default function NotifikasiPage() {
           <div className="mb-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <button
-                  onClick={() => router.back()}
-                  className="p-2 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
-                  aria-label="Kembali"
-                >
+                <button onClick={() => router.back()} className="p-2 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0" aria-label="Kembali">
                   <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6 text-gray-700" />
                 </button>
                 <div>
-                  <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
-                    Notifikasi
-                  </h1>
-                  {unreadCount > 0 && (
-                    <p className="text-sm text-gray-600">
-                      {unreadCount} belum dibaca
-                    </p>
-                  )}
+                  <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Notifikasi</h1>
+                  {unreadCount > 0 && <p className="text-sm text-gray-600">{unreadCount} belum dibaca</p>}
                 </div>
               </div>
 
               {notifications.length > 0 && unreadCount > 0 && (
-                <button
-                  onClick={markAllAsRead}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium whitespace-nowrap"
-                >
+                <button onClick={markAllAsRead} className="text-sm text-blue-600 hover:text-blue-700 font-medium whitespace-nowrap">
                   Tandai Semua Dibaca
                 </button>
               )}
@@ -212,33 +190,18 @@ export default function NotifikasiPage() {
 
             {/* Filter Buttons */}
             <div className="flex gap-2 overflow-x-auto pb-2">
-              <button
-                onClick={() => setFilter("all")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  filter === "all"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
-              >
+              <button onClick={() => setFilter("all")} className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${filter === "all" ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}>
                 Semua ({notifications.length})
               </button>
               <button
                 onClick={() => setFilter("leave")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  filter === "leave"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${filter === "leave" ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
               >
                 Cuti ({notifications.filter((n) => n.category === "leave").length})
               </button>
               <button
                 onClick={() => setFilter("slip_gaji")}
-                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
-                  filter === "slip_gaji"
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50"
-                }`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${filter === "slip_gaji" ? "bg-blue-600 text-white" : "bg-white text-gray-700 hover:bg-gray-50"}`}
               >
                 Slip Gaji ({notifications.filter((n) => n.category === "slip_gaji").length})
               </button>
@@ -256,14 +219,8 @@ export default function NotifikasiPage() {
           ) : filteredNotifications.length === 0 ? (
             <div className="bg-white rounded-xl p-8 text-center">
               <Bell className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-1">
-                Tidak Ada Notifikasi
-              </h3>
-              <p className="text-gray-600 text-sm">
-                {filter === "all"
-                  ? "Anda belum memiliki notifikasi"
-                  : `Tidak ada notifikasi ${filter === "leave" ? "cuti" : "slip gaji"}`}
-              </p>
+              <h3 className="text-lg font-semibold text-gray-700 mb-1">Tidak Ada Notifikasi</h3>
+              <p className="text-gray-600 text-sm">{filter === "all" ? "Anda belum memiliki notifikasi" : `Tidak ada notifikasi ${filter === "leave" ? "cuti" : "slip gaji"}`}</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -274,9 +231,7 @@ export default function NotifikasiPage() {
                   <div
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
-                    className={`bg-white ${getNotificationColor(
-                      notification.type
-                    )} border border-gray-200 rounded-xl p-5 shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.01] ${
+                    className={`bg-white ${getNotificationColor(notification.type)} border border-gray-200 rounded-xl p-5 shadow-md cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-[1.01] ${
                       !isRead ? "ring-2 ring-blue-500 ring-offset-2" : ""
                     }`}
                   >
@@ -284,23 +239,13 @@ export default function NotifikasiPage() {
                       {/* Content */}
                       <div className="flex-1">
                         <div className="flex items-start justify-between gap-2 mb-2">
-                          <h3
-                            className={`text-base sm:text-lg font-semibold text-gray-900 ${
-                              !isRead ? "font-bold" : ""
-                            }`}
-                          >
+                          <h3 className={`text-base sm:text-lg font-semibold text-gray-900 ${!isRead ? "font-bold" : ""}`}>
                             {notification.title}
-                            {!isRead && (
-                              <span className="ml-2 inline-block px-2.5 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold rounded-full shadow-sm">
-                                BARU
-                              </span>
-                            )}
+                            {!isRead && <span className="ml-2 inline-block px-2.5 py-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold rounded-full shadow-sm">BARU</span>}
                           </h3>
                         </div>
 
-                        <p className="text-sm text-gray-600 mb-3 leading-relaxed">
-                          {notification.message}
-                        </p>
+                        <p className="text-sm text-gray-600 mb-3 leading-relaxed">{notification.message}</p>
 
                         <div className="flex items-center gap-2 text-xs text-gray-500">
                           <Calendar className="w-3.5 h-3.5" />
