@@ -6,42 +6,37 @@ return [
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
     */
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
+    'paths' => [
+        'api/*',
+        'sanctum/csrf-cookie',
+    ],
 
     'allowed_methods' => ['*'],
 
+    /*
+     * PENTING:
+     * - Karena pakai withCredentials = true
+     * - TIDAK BOLEH pakai '*'
+     */
     'allowed_origins' => [
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-        'http://localhost:3001',
-        'http://127.0.0.1:3001',
-        'http://192.168.100.5:3001',
-        'http://192.168.100.69:3000',
-        'http://10.172.22.210:3000',
-        'http://localhost:8000',
-        'http://127.0.0.1:8000',
+        'https://pblhryayasandarussalam-ewwu.vercel.app',
     ],
 
-    'allowed_origins_patterns' => [
-        '/^http:\/\/192\.168\.\d+\.\d+:\d+$/',
-        '/^http:\/\/10\.\d+\.\d+\.\d+:\d+$/',
-    ],
+    'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
 
+    /*
+     * Tidak perlu expose header khusus
+     */
     'exposed_headers' => [],
 
     'max_age' => 0,
 
+    /*
+     * WAJIB true untuk Sanctum + cookie cross-domain
+     */
     'supports_credentials' => true,
-
 ];
